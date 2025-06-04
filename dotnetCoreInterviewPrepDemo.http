@@ -1,0 +1,6 @@
+@dotnetCoreInterviewPrepDemo_HostAddress = http://localhost:5230
+
+GET {{dotnetCoreInterviewPrepDemo_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
