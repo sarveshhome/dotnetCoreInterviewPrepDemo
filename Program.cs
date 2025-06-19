@@ -1,7 +1,12 @@
+using dotnetCoreInterviewPrepDemo.Middleware;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
+
+// Register the middleware
+builder.Services.AddTransient<MyCustomMiddleware>();
+
 
 // Add Swagger services
 builder.Services.AddEndpointsApiExplorer();
@@ -26,8 +31,13 @@ if (app.Environment.IsDevelopment())
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "DotNET Core API V1");
     });
 }
-
+// middleware pipeline
 app.UseMiddleware<RequestLoggingMiddleware>();
+app.UseMiddleware<PerformanceMiddleware>();
+app.UseMiddleware<MaintenanceMiddleware>();
+// Use the middleware
+app.UseMiddleware<MyCustomMiddleware>();
+
 app.UseHttpsRedirection();
 
 app.MapGet("/test", async context =>
