@@ -1,7 +1,7 @@
 //Measure endpoint performance for optimization
 using System.Diagnostics;
 
-public class PerformanceMiddleware
+public class PerformanceMiddleware 
 {
     private readonly RequestDelegate _next;
     private readonly ILogger<PerformanceMiddleware> _logger;    
