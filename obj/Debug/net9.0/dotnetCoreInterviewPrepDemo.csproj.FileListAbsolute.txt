@@ -35,3 +35,11 @@
 /Users/sarveshkumar/Practice/NetCore/dotnetCoreInterviewPrepDemo/obj/Debug/net9.0/dotnetCoreInterviewPrepDemo.pdb
 /Users/sarveshkumar/Practice/NetCore/dotnetCoreInterviewPrepDemo/obj/Debug/net9.0/dotnetCoreInterviewPrepDemo.genruntimeconfig.cache
 /Users/sarveshkumar/Practice/NetCore/dotnetCoreInterviewPrepDemo/obj/Debug/net9.0/ref/dotnetCoreInterviewPrepDemo.dll
+/Users/sarveshkumar/Practice/NetCore/dotnetCoreInterviewPrepDemo/bin/Debug/net9.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll
+/Users/sarveshkumar/Practice/NetCore/dotnetCoreInterviewPrepDemo/bin/Debug/net9.0/Microsoft.IdentityModel.Abstractions.dll
+/Users/sarveshkumar/Practice/NetCore/dotnetCoreInterviewPrepDemo/bin/Debug/net9.0/Microsoft.IdentityModel.JsonWebTokens.dll
+/Users/sarveshkumar/Practice/NetCore/dotnetCoreInterviewPrepDemo/bin/Debug/net9.0/Microsoft.IdentityModel.Logging.dll
+/Users/sarveshkumar/Practice/NetCore/dotnetCoreInterviewPrepDemo/bin/Debug/net9.0/Microsoft.IdentityModel.Protocols.dll
+/Users/sarveshkumar/Practice/NetCore/dotnetCoreInterviewPrepDemo/bin/Debug/net9.0/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+/Users/sarveshkumar/Practice/NetCore/dotnetCoreInterviewPrepDemo/bin/Debug/net9.0/Microsoft.IdentityModel.Tokens.dll
+/Users/sarveshkumar/Practice/NetCore/dotnetCoreInterviewPrepDemo/bin/Debug/net9.0/System.IdentityModel.Tokens.Jwt.dll
