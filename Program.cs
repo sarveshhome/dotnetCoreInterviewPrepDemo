@@ -2,6 +2,10 @@ using dotnetCoreInterviewPrepDemo.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using dotnetCoreInterviewPrepDemo.Model;
+using dotnetCoreInterviewPrepDemo.DAL;
+using dotnetCoreInterviewPrepDemo.Extensions;
+using Microsoft.AspNetCore.Http;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +14,8 @@ builder.Services.AddControllers();
 
 // Register the middleware
 builder.Services.AddTransient<MyCustomMiddleware>();
+//Database add with code first 
+builder.Services.AddScoped<PatientDbContext>();
 
 
 // Configure CORS
@@ -67,6 +73,34 @@ if (app.Environment.IsDevelopment())
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "DotNET Core API V1");
     });
 }
+
+
+// Middleware A
+app.Use(async (context, next) =>
+{
+    Console.WriteLine("A: Before");
+    await next();
+    Console.WriteLine("A: After");
+});
+
+// Middleware B
+app.Use(async (context, next) =>
+{
+    Console.WriteLine("B: Before");
+    await next();
+    Console.WriteLine("B: After");
+});
+
+// // Terminal Middleware
+// app.Run(async context =>
+// {
+//     Console.WriteLine("==> Handling Request");
+//     await context.Response.WriteAsync("Hello from terminal middleware!");
+// });
+
+// // No need to call app.Run() again; it's already terminal middleware above
+// app.Run(); // ✅ This is still required to start the app
+
 // middleware pipeline
 app.UseMiddleware<RequestLoggingMiddleware>();
 app.UseMiddleware<PerformanceMiddleware>();
@@ -89,7 +123,20 @@ app.MapControllers();
 
 app.MapGet("/test", async context =>
 {
-    await context.Response.WriteAsync("test endpoint!");
-}); // Added semicolon here
+    int number =45;
+    bool isEven = number.IsEven();
+    MyLogger logger = new MyLogger();
+    await context.Response.WriteAsync("Is the number " + number + " even? " + isEven + "\n");
+    await context.Response.WriteAsync("test endpoint!"+ "\n");
+    await context.Response.WriteAsync(logger.Log("test log message!"));
+});
+
+
+// Terminal Middleware
+app.Run(async context =>
+{
+    Console.WriteLine("==> Handling Request");
+    await context.Response.WriteAsync("Hello from terminal middleware!");
+});
 
 app.Run();
