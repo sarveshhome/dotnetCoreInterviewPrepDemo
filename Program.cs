@@ -6,6 +6,7 @@ using dotnetCoreInterviewPrepDemo.Model;
 using dotnetCoreInterviewPrepDemo.DAL;
 using dotnetCoreInterviewPrepDemo.Extensions;
 using Microsoft.AspNetCore.Http;
+using System.Threading.Tasks;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +17,23 @@ builder.Services.AddControllers();
 builder.Services.AddTransient<MyCustomMiddleware>();
 //Database add with code first 
 builder.Services.AddScoped<PatientDbContext>();
+
+// Register ParrallelTestService
+builder.Services.AddSingleton<ParallelTestService>();
+
+// Register MyLogger as a singleton
+builder.Services.AddSingleton<MyLogger>();
+
+//Register GuidService as a singleton
+//builder.Services.AddSingleton<GuidService>();
+
+// Register GuidService as a scoped service
+//builder.Services.AddScoped<GuidService>();
+
+// Register GuidService as a transient service
+builder.Services.AddTransient<GuidService>();
+
+builder.Services.AddScoped<ParentService>();
 
 
 // Configure CORS
@@ -74,22 +92,22 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-
+#region "Middleware"
 // Middleware A
-app.Use(async (context, next) =>
-{
-    Console.WriteLine("A: Before");
-    await next();
-    Console.WriteLine("A: After");
-});
+// app.Use(async (context, next) =>
+// {
+//     Console.WriteLine("A: Before");
+//     await next();
+//     Console.WriteLine("A: After");
+// });
 
-// Middleware B
-app.Use(async (context, next) =>
-{
-    Console.WriteLine("B: Before");
-    await next();
-    Console.WriteLine("B: After");
-});
+// // Middleware B
+// app.Use(async (context, next) =>
+// {
+//     Console.WriteLine("B: Before");
+//     await next();
+//     Console.WriteLine("B: After");
+// });
 
 // // Terminal Middleware
 // app.Run(async context =>
@@ -100,6 +118,20 @@ app.Use(async (context, next) =>
 
 // // No need to call app.Run() again; it's already terminal middleware above
 // app.Run(); // ✅ This is still required to start the app
+#endregion
+
+app.Use(async (httpContext, next) =>
+{
+    Console.WriteLine($"Request Path: {httpContext.Request.Path}");
+    if(httpContext.Request.Query.TryGetValue("a", out var value))
+    {
+        var guid = httpContext.RequestServices.GetRequiredService<GuidService>();
+        Console.WriteLine($"Query parameter 'a': {value}");
+        Console.WriteLine($"Guid from service: {guid.Id}");
+        
+    }
+    await next();
+});
 
 // middleware pipeline
 app.UseMiddleware<RequestLoggingMiddleware>();
@@ -121,22 +153,40 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+app.MapGet("/",()=> "Hello World!");
+app.MapGet("/html",()=> "<h1>Hello World!</h1>");
+app.MapGet("/one/{myparam}",(string myparam, string a,GuidService guidService)=> 
+        $"Hello {myparam} , {a} and {guidService.Id}!");
+#region "Endpoint of ParentService"
+// app.MapGet("/one/{myparam}",(string myparam, string a,ParentService guidService)=> 
+//         $"Hello {myparam} , {a} and {guidService.Id}!");
+#endregion
 app.MapGet("/test", async context =>
 {
     int number =45;
     bool isEven = number.IsEven();
-    MyLogger logger = new MyLogger();
+    var logger = context.RequestServices.GetRequiredService<MyLogger>();
     await context.Response.WriteAsync("Is the number " + number + " even? " + isEven + "\n");
     await context.Response.WriteAsync("test endpoint!"+ "\n");
     await context.Response.WriteAsync(logger.Log("test log message!"));
+
+    Thread.Sleep(7000);
 });
+
+app.MapGet("/Parallel", async context =>
+{
+    var parallelTestService = context.RequestServices.GetRequiredService<ParallelTestService>();
+    await parallelTestService.ParallelTestMethod();
+    await context.Response.WriteAsync("Parallel endpoint!");
+});
+
 
 
 // Terminal Middleware
-app.Run(async context =>
-{
-    Console.WriteLine("==> Handling Request");
-    await context.Response.WriteAsync("Hello from terminal middleware!");
-});
+// app.Run(async context =>
+// {
+//     Console.WriteLine("==> Handling Request");
+//     await context.Response.WriteAsync("Hello from terminal middleware!");
+// });
 
-app.Run();
+ app.Run();
