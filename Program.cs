@@ -184,8 +184,9 @@ app.MapGet("/Parallel", async context =>
 
 app.MapGet("/question", async context =>
 {
-    var result = LargestElement12.FindLargestElement();
-    await context.Response.WriteAsync($"The largest element is: {result}");
+    //var result = LargestElement12.FindLargestElement();
+     DuplicatesInArray33.FindDuplicates();
+    //await context.Response.WriteAsync($"The largest element is: {result}");
 });
 
 
