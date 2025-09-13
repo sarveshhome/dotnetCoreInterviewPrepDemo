@@ -15,15 +15,23 @@ namespace dotnetCoreInterviewPrepDemo.Question.IntermediateQ
             #endregion
 
             #region method 2
-            int largest = numbers[0];
+            int largest = numbers[0]; 
             for (int i = 1; i < numbers.Length; i++)
             {
-                if (numbers[i] > largest)
+                if (numbers[i] > largest) 
                 {
                     largest = numbers[i];
                 }
             }
             return largest;
+            #endregion
+
+            #region method 3
+
+            // int number = numbers.OrderByDescending(n => n).FirstOrDefault();
+
+            // return number;
+
             #endregion
         }
     }

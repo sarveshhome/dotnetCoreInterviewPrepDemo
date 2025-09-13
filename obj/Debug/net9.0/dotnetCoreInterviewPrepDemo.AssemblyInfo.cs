@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("dotnetCoreInterviewPrepDemo")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a5f0c8198e50b5100e34bf62559621af4d2f9f0e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c2596c1eb848946ad06575c694a0d30e071c34ed")]
 [assembly: System.Reflection.AssemblyProductAttribute("dotnetCoreInterviewPrepDemo")]
 [assembly: System.Reflection.AssemblyTitleAttribute("dotnetCoreInterviewPrepDemo")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
