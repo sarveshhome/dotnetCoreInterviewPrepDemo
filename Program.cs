@@ -7,6 +7,8 @@ using dotnetCoreInterviewPrepDemo.DAL;
 using dotnetCoreInterviewPrepDemo.Extensions;
 using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
+using dotnetCoreInterviewPrepDemo.Question.IntermediateQ;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -93,7 +95,7 @@ if (app.Environment.IsDevelopment())
 }
 
 #region "Middleware"
-// Middleware A
+// // Middleware A
 // app.Use(async (context, next) =>
 // {
 //     Console.WriteLine("A: Before");
@@ -101,7 +103,7 @@ if (app.Environment.IsDevelopment())
 //     Console.WriteLine("A: After");
 // });
 
-// // Middleware B
+// // // Middleware B
 // app.Use(async (context, next) =>
 // {
 //     Console.WriteLine("B: Before");
@@ -178,6 +180,12 @@ app.MapGet("/Parallel", async context =>
     var parallelTestService = context.RequestServices.GetRequiredService<ParallelTestService>();
     await parallelTestService.ParallelTestMethod();
     await context.Response.WriteAsync("Parallel endpoint!");
+});
+
+app.MapGet("/question", async context =>
+{
+    var result = LargestElement12.FindLargestElement();
+    await context.Response.WriteAsync($"The largest element is: {result}");
 });
 
 

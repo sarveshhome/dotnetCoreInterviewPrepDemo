@@ -63,6 +63,22 @@ namespace dotnetCoreInterviewPrepDemo.Controllers
             }
         }
 
+        private bool IsValidUser(User user)
+        {
+            // Add your user validation logic here
+            // This is a simple example - in production, you should check against a database
+            return !string.IsNullOrEmpty(user.UserName) && !string.IsNullOrEmpty(user.Password);
+        }
+
+        private bool HasRequiredPermissions(string userName)
+        {
+            // Add your permission checking logic here
+            // This is a simple example - in production, you should check against your authorization system
+            return true;
+        }
+
+
+
         [HttpPost("login")]
         public IActionResult Login([FromBody] User user)
         {
@@ -72,6 +88,14 @@ namespace dotnetCoreInterviewPrepDemo.Controllers
                 {
                     return BadRequest("Username is required");
                 }
+                // if (!IsValidUser(user))
+                // {
+                //     return Unauthorized("Invalid credentials");
+                // }
+                // if (!HasRequiredPermissions(user.Username))
+                // {
+                //     return Forbidden("Insufficient permissions");
+                // }
 
                 if (user.UserName == "test") // 
                 {
