@@ -13,6 +13,16 @@ namespace dotnetCoreInterviewPrepDemo.Model
         public string patientName { get; set; }
 
         public List<Problem> Problems { get; set; }
+
+        public int Version { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+
+        public DateTime? ModifiedAt { get; set; }
+
+        public bool IsLatestVersion { get; set; }
+
+        public int? PreviousVersionId { get; set; }
     }
     public class Problem
     {
