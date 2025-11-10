@@ -5,6 +5,7 @@ using dotnetCoreInterviewPrepDemo.Extensions;
 using dotnetCoreInterviewPrepDemo.Middleware;
 using dotnetCoreInterviewPrepDemo.Model;
 using dotnetCoreInterviewPrepDemo.Question.IntermediateQ;
+using dotnetCoreInterviewPrepDemo.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -76,6 +77,7 @@ builder.Services.AddSingleton<MyLogger>();
 builder.Services.AddTransient<GuidService>();
 
 builder.Services.AddScoped<ParentService>();
+builder.Services.AddHttpClient<IUserService, UserService>();
 
 // Configure CORS
 builder.Services.AddCors(options =>
