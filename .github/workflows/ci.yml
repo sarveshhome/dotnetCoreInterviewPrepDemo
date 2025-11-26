@@ -32,8 +32,16 @@ jobs:
     - name: Build
       run: dotnet build --no-restore --configuration Release
 
-    - name: Lint with dotnet format
-      run: dotnet format dotnetCoreInterviewPrepDemo.sln --verify-no-changes --verbosity diagnostic
+    - name: Format code
+      run: dotnet format dotnetCoreInterviewPrepDemo.sln
+      
+    - name: Check for changes
+      run: |
+        if [ -n "$(git status --porcelain)" ]; then
+          echo "Code formatting changes detected. Please run 'dotnet format' locally."
+          git diff
+          exit 1
+        fi
 
     - name: Run tests with coverage
       run: |
