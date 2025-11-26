@@ -33,7 +33,7 @@ jobs:
       run: dotnet build --no-restore --configuration Release
 
     - name: Lint with dotnet format
-      run: dotnet format --verify-no-changes --verbosity diagnostic
+      run: dotnet format dotnetCoreInterviewPrepDemo.sln --verify-no-changes --verbosity diagnostic
 
     - name: Run tests with coverage
       run: |
