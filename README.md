@@ -1,68 +1,77 @@
-# dotnetCoreInterviewPrepDemo
-Dotnet Core interview Prepration 
+# .NET Core Interview Preparation Demo
 
+A comprehensive .NET 9 Web API project demonstrating various concepts and patterns commonly asked in interviews.
 
-## Middleware
+## Features
 
+### Middleware
+- **Custom Exception Handler** - Global exception handling
+- **Rate Limiting** - Redis-based request throttling
+- **Performance Monitoring** - Request timing middleware
+- **Request Logging** - HTTP request/response logging
+- **Maintenance Mode** - Application maintenance middleware
 
+### Controllers
+- **Patient API** - CRUD operations with Entity Framework
+- **Security Controller** - JWT authentication examples
 
-## Swagger 
+### Services
+- **GuidService** - Demonstrates primary constructors (C# 12)
+- **UserService** - User management operations
 
-`dotnet add package Swashbuckle.AspNetCore`
+### Data Access
+- **Entity Framework Core** - SQL Server integration
+- **DbContext** - Patient data management
 
+### Interview Questions
+- Algorithm implementations
+- LINQ examples
+- Exception handling patterns
+- Parallel processing examples
 
-`dotnet new list`
-
-### command
-
-`dotnet watch --no-hot-reload`
-
- - With --no-hot-reload: App fully restarts when changes are detected
-
-
-### 
+## Quick Start
 
 ```bash
-// Current implementation
+# Clone and run
+dotnet restore
+dotnet run
+
+# Watch mode (full restart)
+dotnet watch --no-hot-reload
+```
+
+## Packages
+
+```bash
+# Core packages
+dotnet add package Swashbuckle.AspNetCore
+dotnet add package Microsoft.EntityFrameworkCore.SqlServer
+dotnet add package Microsoft.AspNetCore.Authentication.JwtBearer
+dotnet add package StackExchange.Redis
+dotnet add package Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer
+```
+
+## API Endpoints
+
+- `GET /api/patient` - Get all patients
+- `POST /api/patient` - Create patient
+- `GET /swagger` - API documentation
+
+## Primary Constructor Example
+
+```csharp
+// Traditional approach
 public class GuidService
 {
     public Guid Id { get; set; }
-    public GuidService()
-    {
-        Id = Guid.NewGuid();
-    }
+    public GuidService() => Id = Guid.NewGuid();
 }
 
-// Changes needed for primary constructor:
-// 1. Remove traditional constructor
-// 2. Add primary constructor parameter in class declaration
-// 3. Initialize property with expression
-
-// New implementation with primary constructor
-public class GuidService(/* primary constructor here */)
-{
-    // Property initialization using expression body
-    public Guid Id { get; set; } = Guid.NewGuid();
-}
-
-// Alternative implementation with parameter
+// Primary constructor (C# 12)
 public class GuidService(Guid id = default)
 {
     public Guid Id { get; set; } = id == default ? Guid.NewGuid() : id;
 }
-
-/* Key Changes:
-   - Removed: public GuidService() { ... }
-   - Added: Constructor parameters after class name
-   - Changed: Property initialization style
-   - Requirements: .NET 8 and C# 12
-*/
-
-
-
-
-#### How to store versioning in Asp.net 
-
-`dotnet add package Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer`
+```
 
 
