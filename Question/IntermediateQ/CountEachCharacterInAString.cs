@@ -1,4 +1,3 @@
-//Count Each Character in a String
 public class Count_Each_Character_in_a_String
 {
     public static void CountEachCharacterInAStrings()
@@ -13,13 +12,15 @@ public class Count_Each_Character_in_a_String
             else
                 charCount[c] = 1;
         }
-        
+
         // Print output
         foreach (var item in charCount)
         {
             Console.WriteLine($"{item.Key} : {item.Value}");
         }
-        
+
         System.Console.WriteLine(string.Join(", ", charCount.Select(x => $"{x.Key} : {x.Value}")));
+
+        str.GroupBy(c => c).ToList().ForEach(g => Console.WriteLine($"{g.Key} : {g.Count()}"));
     }
 }
