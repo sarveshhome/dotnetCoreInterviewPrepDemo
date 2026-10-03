@@ -1,18 +1,15 @@
 using System.Text;
-using System.Threading.Tasks;
 using dotnetCoreInterviewPrepDemo.DAL;
 using dotnetCoreInterviewPrepDemo.Extensions;
 using dotnetCoreInterviewPrepDemo.Middleware;
-using dotnetCoreInterviewPrepDemo.Model;
-using dotnetCoreInterviewPrepDemo.Question.IntermediateQ;
 using dotnetCoreInterviewPrepDemo.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using HealthChecks.UI.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -59,7 +56,7 @@ builder.Services.AddVersionedApiExplorer(options =>
 // Register Redis connection
 builder.Services.AddSingleton<IConnectionMultiplexer>(provider =>
 {
-    var connectionString = builder.Configuration.GetConnectionString("Redis") ?? "localhost:6379";
+    var connectionString = builder.Configuration.GetConnectionString("Redis") ?? "localhost:6379,abortConnect=false";
     return ConnectionMultiplexer.Connect(connectionString);
 });
 
@@ -84,8 +81,14 @@ builder.Services.AddSingleton<MyLogger>();
 // Register GuidService as a transient service
 builder.Services.AddTransient<GuidService>();
 
-builder.Services.AddScoped<ParentService>();
-builder.Services.AddHttpClient<IUserService, UserService>();
+//builder.Services.AddScoped<ParentService>();
+//builder.Services.AddHttpClient<IUserService, UserService>();
+
+// Register HttpClient for your custom API check
+builder.Services.AddHttpClient();
+
+// 1. Register Health Checks
+
 
 // Configure CORS
 builder.Services.AddCors(options =>
@@ -152,8 +155,32 @@ builder.Services.AddSwaggerGen(c =>
     );
 });
 
-var app = builder.Build();
+// 1. Register Health Checks
+builder.Services
+    .AddHealthChecks()
+    // Database Check
+    .AddSqlServer(
+        connectionString: builder.Configuration.GetConnectionString("DefaultConnection")
+            ?? throw new InvalidOperationException("DefaultConnection not configured"),
+        healthQuery: "SELECT 1;",
+        name: "SQL Server",
+        tags: new[] { "ready" })
 
+    // Kafka Check (validates connectivity by producing a test message)
+    .AddKafka(
+        config: new Confluent.Kafka.ProducerConfig
+        {
+            BootstrapServers = builder.Configuration["Kafka:BootstrapServers"]
+        },
+        name: "Kafka Broker",
+        tags: new[] { "ready" })
+
+    // Custom External API Check
+    .AddCheck<ExternalApiHealthCheck>(
+        name: "External Payment API",
+        tags: new[] { "ready" });
+
+var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -176,6 +203,22 @@ if (app.Environment.IsDevelopment())
 // });
 
 // // // Middleware B
+// app.Use(async (context, next) =>
+// {
+//     Console.WriteLine("B: Before");
+//     await next();
+//     Console.WriteLine("B: After");
+// });
+
+// // // Middleware c
+// app.Use(async (context, next) =>
+// {
+//     Console.WriteLine("C: Before");
+//    
+//     Console.WriteLine("C: After");
+// });
+
+// // // Middleware D
 // app.Use(async (context, next) =>
 // {
 //     Console.WriteLine("B: Before");
@@ -283,5 +326,21 @@ app.MapGet(
 //     Console.WriteLine("==> Handling Request");
 //     await context.Response.WriteAsync("Hello from terminal middleware!");
 // });
+
+
+// 2. Map Health Check Endpoints
+
+// Liveness endpoint: returns 200 OK simply if the app instance is up and running
+app.MapHealthChecks("/health/live", new HealthCheckOptions
+{
+    Predicate = _ => false // Excludes all dependency checks
+});
+
+// Readiness endpoint: returns 200 OK only if the app AND all dependencies are healthy
+app.MapHealthChecks("/health/ready", new HealthCheckOptions
+{
+    Predicate = check => check.Tags.Contains("ready"),
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse // Formats as clear, detailed JSON
+});
 
 app.Run();

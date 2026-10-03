@@ -14,12 +14,12 @@ using Microsoft.Extensions.Logging;
 namespace dotnetCoreInterviewPrepDemo.Controllers
 {
     [ApiController]
-    [Authorize(Roles = "Admin,User")]
+    //[Authorize(Roles = "Admin,User")]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiVersion("1.0")]
     [ApiVersion("2.0", Deprecated =true)] // Mark version 2.0 as deprecated
-   
     [ApiVersion("3.0")]
+    [ValidatePatientFilter]
     public class PatientController : ControllerBase
     {
         private PatientDbContext _db = null;
@@ -116,7 +116,7 @@ namespace dotnetCoreInterviewPrepDemo.Controllers
 
             return Ok(newVersion);
         }
-
+        [OktaAuthorization]
         [HttpGet("/api/patient/{id}/versions")]
         [Produces("application/json", "application/xml")]
         public IActionResult GetPatientVersions(int id)
